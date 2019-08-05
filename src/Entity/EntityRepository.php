@@ -10,8 +10,11 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaConfig;
+use Nealis\EntityRepository\Data\Filter\Filter;
 use Nealis\EntityRepository\Data\Filter\Rule;
+use Nealis\EntityRepository\Entity\Field\Field;
 use Nealis\Params\Params;
+use Nealis\Result\Result;
 
 abstract class EntityRepository implements EntityRepositoryInterface
 {
@@ -682,61 +685,48 @@ abstract class EntityRepository implements EntityRepositoryInterface
         $platform = $this->getDatabasePlatform();
         if($this->checkDb($library)) return false;
 
-        //DB2IBMi excluded
-        if (!$platform instanceof DB2IBMiPlatform) {
-            //TODO Handle createStmt for non Db2 platforms
-            /** @var Entity $entity */
-            $entity = $this->getEntityInstance();
+        /** @var Entity $entity */
+        $entity = $this->getEntityInstance();
 
-            $schemaConfig = new SchemaConfig();
-            $schemaConfig->setName($entity::$schemaName);
-            $schema = new Schema([], [], $schemaConfig);
-            $table = $schema->createTable($this->getTableName());
+        $schemaConfig = new SchemaConfig();
+        $schemaConfig->setName($entity::$schemaName);
+        $schema = new Schema([], [], $schemaConfig);
+        $table = $schema->createTable($this->getTableName());
 
-            /** @var Field $field */
-            foreach($entity->getDbFields() as $field)
-            {
-                $name = $field->getColumnName();
-                $type = $field->getColumnType();
-                $options = [];
+        /** @var Field $field */
+        foreach($entity->getDbFields() as $field)
+        {
+            $name = $field->getColumnName();
+            $type = $field->getColumnType();
+            $options = [];
 
-                if($field->isId() && $field->isGenerated()) $options['autoincrement'] = true;
+            if($field->isId() && $field->isGenerated()) $options['autoincrement'] = true;
 
-                $nullable = $field->isNullable();
-                if(!empty($nullable)) $options['notnull'] = false;
+            $nullable = $field->isNullable();
+            if(!empty($nullable)) $options['notnull'] = false;
 
-                if(!is_null($field->getDefault())) $options['default'] = $field->getDefault();
+            if(!is_null($field->getDefault())) $options['default'] = $field->getDefault();
 
-                $lenght = $field->getLength();
-                if(!empty($lenght)) $options['length'] = $lenght;
+            $lenght = $field->getLength();
+            if(!empty($lenght)) $options['length'] = $lenght;
 
-                $table->addColumn($name, $type, $options);
-            }
-
-            $table->setPrimaryKey($entity->getIdentity());
-
-            $queries = $schema->toSql($platform);
-
-            foreach ($queries as $sql)
-            {
-                //Replace varchar into citext for case-insensitive string fields
-                if ($platform instanceof PostgreSqlPlatform) {
-                    $sql = preg_replace('*VARCHAR\([0-9]+\)|VARCHAR/gi*', 'CITEXT', $sql);
-                }
-                $this->getConnection()->executeQuery($sql);
-            }
-
-            $this->initDbIndexes();
-        } else {
-            if (!empty($library)) {
-                $library = $library . '/';
-            } else {
-                $library = '';
-            }
-
-            $stmt = str_ireplace('{{ LIBRARY }}', $library, $this->createStmt);
-            return $this->connection->exec($stmt);
+            $table->addColumn($name, $type, $options);
         }
+
+        $table->setPrimaryKey($entity->getIdentity());
+
+        $queries = $schema->toSql($platform);
+
+        foreach ($queries as $sql)
+        {
+            //Replace varchar into citext for case-insensitive string fields
+            if ($platform instanceof PostgreSqlPlatform) {
+                $sql = preg_replace('*VARCHAR\([0-9]+\)|VARCHAR/gi*', 'CITEXT', $sql);
+            }
+            $this->getConnection()->executeQuery($sql);
+        }
+
+        $this->initDbIndexes();
     }
 
     public function initDbIndexes()
@@ -778,16 +768,7 @@ abstract class EntityRepository implements EntityRepositoryInterface
     public function checkDb($library = '')
     {
         $tableName = $this->getTableName();
-        /** @var DB2IBMiPlatform $platform */
-        $platform = $this->getDatabasePlatform();
-        if ($platform instanceof DB2IBMiPlatform) {
-            $sql = $platform->getListTablesSQL($library);
-            $tables = $this->getConnection()->fetchAll($sql);
-            $tables = array_map(function($el) { return $el['NAME']; }, $tables);
-            return in_array($tableName, array_values($tables));
-        } else {
-            return $this->getConnection()->getSchemaManager()->tablesExist($tableName);
-        }
+        return $this->getConnection()->getSchemaManager()->tablesExist($tableName);
     }
 
     public function getDatabasePlatform()
