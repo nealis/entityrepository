@@ -1,0 +1,23 @@
+{
+  "name": "nealis/entityrepository",
+  "description": "A Simple Entity/Repository system to represent Database Rows as Object.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Guido Sangiovanni",
+      "email": "sangiovanni.guido@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Nealis\\EntityRepository\\": "src/"
+    }
+  },
+  "require": {
+    "doctrine/dbal": "^2.9",
+    "nealis/params": "^1.0",
+    "nealis/result": "^1.0",
+    "ezyang/htmlpurifier": "^4.0"
+  }
+}
