@@ -1283,4 +1283,10 @@ class Entity implements \ArrayAccess
             $this->setIdentityData($id);
         }
     }
+
+    public function translate($string)
+    {
+        //TODO valutare se e come utilizzare il translator
+        return $string;
+    }
 }

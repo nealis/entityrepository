@@ -3,7 +3,7 @@
 namespace Nealis\EntityRepository\Data\Validator;
 
 
-use Nealis\Doctrine\Entity\Entity;
+use Nealis\EntityRepository\Entity\Entity;
 
 class FieldNotBlankValidator extends Validator
 {

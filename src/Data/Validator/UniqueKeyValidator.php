@@ -4,7 +4,6 @@ namespace Nealis\EntityRepository\Data\Validator;
 
 use Nealis\EntityRepository\Data\Filter\Rule;
 use Nealis\EntityRepository\Data\Validator\Validator as EntityValidator;
-use Nealis\EntityRepository\Entity\AbstractEntity;
 use Nealis\EntityRepository\Entity\Entity;
 
 class UniqueKeyValidator extends EntityValidator

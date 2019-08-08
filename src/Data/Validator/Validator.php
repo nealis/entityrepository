@@ -2,7 +2,7 @@
 
 namespace Nealis\EntityRepository\Data\Validator;
 
-use Nealis\EntityRepository\Entity\AbstractEntity;
+use Nealis\EntityRepository\Entity\Entity;
 
 class Validator
 {
@@ -55,10 +55,10 @@ class Validator
     //METHODS
 
     /**
-     * @param AbstractEntity $entity
+     * @param Entity $entity
      * @return array
      */
-    public function validate(AbstractEntity $entity)
+    public function validate(Entity $entity)
     {
         return [];
     }
