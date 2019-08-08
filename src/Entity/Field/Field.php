@@ -327,7 +327,7 @@ class Field extends Configurable
                 throw new \Exception(sprintf('Field type %s not implemented', $type));
         }
 
-        $namespace = 'Nealis\\Doctrine\\Entity\\Field\\';
+        $namespace = 'Nealis\\EntityRepository\\Entity\\Field\\';
         $fieldClassName = $namespace.$className;
 
         return new $fieldClassName($config);
