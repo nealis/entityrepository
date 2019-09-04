@@ -19,7 +19,7 @@ class Filter
      * @param array|string $filters
      * @param string $defaultRuleOperator
      */
-    public function __construct(array $filters = [], string $defaultRuleOperator = null)
+    public function __construct($filters = [], string $defaultRuleOperator = null)
     {
         if($defaultRuleOperator !== null) {
             $this->setDefaultRuleOperator($defaultRuleOperator);
@@ -32,7 +32,7 @@ class Filter
     /**
      * @param array $filters
      */
-    private function initFilters(array $filters)
+    private function initFilters($filters)
     {
         if (array_key_exists('rules', $filters) || array_key_exists('groups', $filters) || array_key_exists('not', $filters)) {
             $this->initGroup($filters);
@@ -47,7 +47,7 @@ class Filter
         }
     }
 
-    public function initGroup(array $filters)
+    public function initGroup($filters)
     {
         if (array_key_exists('rules', $filters)) {
             $rules = $filters['rules'];
