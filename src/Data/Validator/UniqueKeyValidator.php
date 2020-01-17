@@ -52,7 +52,7 @@ class UniqueKeyValidator extends EntityValidator
                 //Exclude self identity value while editing mode
                 if (!$isNew) {
                     foreach ($identity as $id) {
-                        $filters->addRule($id, Rule::NOT, $entity->get($id));
+                        $filters->addRule($id, Rule::NOT, [$entity->get($id)]);
                     }
                 }
 
@@ -65,7 +65,7 @@ class UniqueKeyValidator extends EntityValidator
                     $fieldName = $uniqueKeyField['name'];
                     $fieldIgnoreEmpty = $uniqueKeyField['ignoreEmpty'];
                     if (!$fieldIgnoreEmpty || ($entity->notEmpty($fieldName))) {
-                        $filters->addRule($fieldName, Rule::EQUALS, $entity->get($fieldName));
+                        $filters->addRule($fieldName, Rule::EQUALS, [$entity->get($fieldName)]);
                     }
                 }
 
